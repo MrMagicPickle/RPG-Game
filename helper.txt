@@ -1,1 +1,18 @@
 https://www.reddit.com/r/gamemaker/comments/4n95io/im_looking_for_a_tutorial_on_strict_grid_based/
+
+
+top-down tile-based game tutorial:
+https://qq.readthedocs.io/en/latest/
+
+
+
+Camera follow movement in pygames:
+https://stackoverflow.com/questions/19746552/pygame-camera-follow-in-a-2d-tile-game
+
+
+Another helpful "scrolling camera" thread with pygames:
+https://gamedev.stackexchange.com/questions/105532/pygame-implementing-a-scrolling-camera
+
+useful camera links:
+https://www.reddit.com/r/pygame/comments/3gsoae/pygame_implementing_a_scrolling_camera/
+https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame/14357169#14357169

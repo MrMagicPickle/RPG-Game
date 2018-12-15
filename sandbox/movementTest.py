@@ -18,6 +18,11 @@ gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("RPG v1.0")
 
 
+class Camera():
+
+    def __init__(self):
+        self.pos = None
+
 class Tile():
    
     def __init__(self, x, y, width=tileSize, height=tileSize):
@@ -37,7 +42,11 @@ class Tile():
         #-- still tryna understand why that is the case though.
         #---UPDATE: oh, width of 50 means it ends at 49, since 0..49 == 50. +1 makes it end at
         #...the next square position.
-        pygame.draw.rect(gameDisplay, (0, 0, 0), (self.x, self.y, self.width+1, self.height+1), 1) 
+        
+        if self.owner is None:
+            pygame.draw.rect(gameDisplay, (0, 0, 0), (self.x, self.y, self.width+1, self.height+1), 1)
+        else:
+            
         return None
 
 
