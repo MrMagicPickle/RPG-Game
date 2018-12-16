@@ -16,3 +16,6 @@ https://gamedev.stackexchange.com/questions/105532/pygame-implementing-a-scrolli
 useful camera links:
 https://www.reddit.com/r/pygame/comments/3gsoae/pygame_implementing_a_scrolling_camera/
 https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame/14357169#14357169
+
+youtube channel that explains some basic game dev - USEFUL:
+https://www.youtube.com/channel/UCy0eKoY5BVtcJHFQGKVe1yg

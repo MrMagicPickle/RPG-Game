@@ -13,15 +13,52 @@ class CameraAwareLayeredUpdates(pygame.sprite.LayeredUpdates):
         self.world_size = world_size
         if self.target:
             self.add(target)
-
+            
+    '''
     def update(self, *args):
         super().update(*args)
         if self.target:
             x = -self.target.rect.center[0] + SCREEN_SIZE.width/2
             y = -self.target.rect.center[1] + SCREEN_SIZE.height/2
-            self.cam += (pygame.math.Vector2((x, y)) - self.cam) * 0.05
+            #self.cam += (pygame.math.Vector2((x, y)) - self.cam) * 0.05
+
+            self.cam.x = x
+            self.cam.y = y
+            
             self.cam.x = max(-(self.world_size.width-SCREEN_SIZE.width), min(0, self.cam.x))
-            self.cam.y = max(-(self.world_size.height-SCREEN_SIZE.height), min(0, self.cam.y))
+            self.cam.y = max(-(self.world_size.height-SCREEN_SIZE.height), min(0, self.cam.y)) 
+    '''
+    
+    def update(self, *args):
+        super().update(*args)
+        if self.target:
+            #coordinates of the target sprite we want to follow.
+            l, t, _, _ = self.target.rect
+
+            #new position our camera that follows the target.
+            x = -l + SCREEN_SIZE.width/2
+            y = -t + SCREEN_SIZE.height/2
+            
+            #further modifications to prevent camera from going out of the map.
+            #-- remember that the camera needs to go opposite of player (kinda blur on this)
+            rightMax = -(self.world_size.width - SCREEN_SIZE.width)
+            leftMin = 0
+            
+
+            print("X: " + str(x))
+            #this part is also sort of blurry, but kinda like its backwards or some shit
+            x = max(rightMax, x)
+            x = min(leftMin, x)
+            print("Right max: " + str(rightMax))
+            print("LEft min: " + str(leftMin))
+
+
+            self.cam.x = x
+            self.cam.y = y
+            print("Camera x:" + str(self.cam.x))
+            print("Player at: " + str(self.target.rect.x))
+
+            #to prevent the camera from going out of the map.
 
     def draw(self, surface):
         spritedict = self.spritedict
@@ -81,6 +118,7 @@ def main():
     platforms = pygame.sprite.Group()
     player = Player(platforms, (TILE_SIZE, TILE_SIZE))
     level_width  = len(level[0])*TILE_SIZE
+    print("Level width: " + str(level_width))
     level_height = len(level)*TILE_SIZE
     entities = CameraAwareLayeredUpdates(player, pygame.Rect(0, 0, level_width, level_height))
 
@@ -148,7 +186,7 @@ class Player(Entity):
             self.vel += GRAVITY
             # max falling speed
             if self.vel.y > 100: self.vel.y = 100
-        print(self.vel.y)
+        #print(self.vel.y)
         if not(left or right):
             self.vel.x = 0
         # increment in x direction
