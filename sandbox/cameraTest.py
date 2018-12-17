@@ -41,16 +41,16 @@ class CameraAwareLayeredUpdates(pygame.sprite.LayeredUpdates):
             
             #further modifications to prevent camera from going out of the map.
             #-- remember that the camera needs to go opposite of player (kinda blur on this)
-            rightMax = -(self.world_size.width - SCREEN_SIZE.width)
-            leftMin = 0
+            rightLimit = -(self.world_size.width - SCREEN_SIZE.width)
+            leftLimit = 0
             
 
             print("X: " + str(x))
             #this part is also sort of blurry, but kinda like its backwards or some shit
-            x = max(rightMax, x)
-            x = min(leftMin, x)
-            print("Right max: " + str(rightMax))
-            print("LEft min: " + str(leftMin))
+            x = max(rightLimit, x)
+            x = min(leftLimit, x)
+            print("Right max: " + str(rightLimit))
+            print("LEft min: " + str(leftLimit))
 
 
             self.cam.x = x
@@ -116,9 +116,10 @@ def main():
 
 
     platforms = pygame.sprite.Group()
+    #why didnt it include the group it is in ?
     player = Player(platforms, (TILE_SIZE, TILE_SIZE))
+
     level_width  = len(level[0])*TILE_SIZE
-    print("Level width: " + str(level_width))
     level_height = len(level)*TILE_SIZE
     entities = CameraAwareLayeredUpdates(player, pygame.Rect(0, 0, level_width, level_height))
 

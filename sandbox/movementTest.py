@@ -30,6 +30,7 @@ class Tile():
         self.y = y
         self.width = width
         self.height = height
+        
         #the object that is placed on the tile
         self.owner = None
 
