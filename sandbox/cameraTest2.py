@@ -107,11 +107,11 @@ class Player(Entity):
 
         if up:
             self.vel.y = -self.speed
-        if down:
+        elif down:
             self.vel.y = self.speed
-        if left:
+        elif left:
             self.vel.x = -self.speed
-        if right:
+        elif right:
             self.vel.x = self.speed
 
         #if we're not moving...
@@ -120,10 +120,14 @@ class Player(Entity):
         if not (up or down):
             self.vel.y = 0
 
-
+        #collision detection.
+        self.collide(self.vel.x, 0)
+            
         #update our position.
         self.rect.left += self.vel.x
         self.rect.top += self.vel.y
+        
+        
 
         
     

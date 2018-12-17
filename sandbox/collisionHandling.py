@@ -17,7 +17,11 @@ from pygame import *
 #GLOBALS
 SCREEN_SIZE = pygame.Rect((0, 0, 800, 640))
 TILE_SIZE = 32 
+        
+        
 
+    
+    
 #Extend this class when creating new entities.
 class Entity(pygame.sprite.Sprite):
     def __init__(self, color, pos, *groups):
@@ -126,10 +130,33 @@ class Player(Entity):
         if not (up or down):
             self.vel.y = 0
 
+        #store our current positions in case of collision.
+        prevX = self.rect.left
+        prevY = self.rect.top
 
-        #update our position.
+        #Update x position first.
         self.rect.left += self.vel.x
+        
+        #check for collisions.
+        if self.hasCollided():
+            self.rect.left = prevX
+
+        #Update y position.
         self.rect.top += self.vel.y
+
+        if self.hasCollided():
+            self.rect.top = prevY
+
+    def hasCollided(self):        
+        #kind of hacky but it should work for now.
+        entityGroup = self.groups()[0]
+        
+        for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
+            if not isinstance(spr, Player):
+                #collision happened.
+                return True
+        return False
+                
 
         
     
@@ -186,6 +213,9 @@ def main():
     #wall sprite group.
     walls = pygame.sprite.Group()
 
+    #path sprite group.
+    paths = pygame.sprite.Group()
+
     
     #build level.
     x = y = 0
@@ -195,6 +225,7 @@ def main():
                 #its in both walls sprite group and entities sprite group.
                 Wall((x,y), walls, entities)
 
+                
             x += TILE_SIZE
         y += TILE_SIZE
         x = 0
