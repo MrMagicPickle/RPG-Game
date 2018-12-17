@@ -1,0 +1,8 @@
+import pygame
+
+WIDTH = 1200
+HEIGHT = 800
+SCREENSIZE = pygame.Rect((0, 0, WIDTH, HEIGHT))
+FPS = 60
+TITLE = "HORROR_RPG"
+TILESIZE = 32
