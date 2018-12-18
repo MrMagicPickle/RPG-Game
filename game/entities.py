@@ -37,7 +37,7 @@ class Player(Entity):
     def objectCollision(self):
         entityGroup = self.groups()[0]
         aObject = None
-        shortest_distance = (TILESIZE // 2) - 1
+        shortest_distance = (TILESIZE // 2) + 1
         center_x = (self.rect.left + self.rect.right) // 2
         center_y = (self.rect.top + self.rect.bottom) // 2
         for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
