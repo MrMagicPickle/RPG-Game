@@ -1,25 +1,17 @@
 import pygame
-from settings import *
+from entity import *
+from pygame import *
+from testObject import *
 
-class Entity(pygame.sprite.Sprite):
-    def __init__(self, color, pos, *groups):
-        super().__init__(*groups)
-        
-        # sets the image to be a surface of a single tile.
-        self.image = pygame.Surface((TILESIZE, TILESIZE))
-        self.image.fill(color)
-        
-        # the bounding box of the entity starting at top left position.
-        self.rect = self.image.get_rect(topleft=pos)
-        
-        
+
+
 class Player(Entity):
     def __init__(self, pos, *groups):
         super().__init__(pygame.Color("#00FF00"), pos)
 
         self.vel = pygame.math.Vector2((0, 0))
-        self.speed = PLAYERSPEED
-        self.range = PLAYERRANGE
+        self.speed = PLAYER_SPEED
+        self.range = PLAYER_RANGE
         self.facing = "down"
         self.interaction_delay = 0
 
@@ -37,11 +29,11 @@ class Player(Entity):
     def objectCollision(self):
         entityGroup = self.groups()[0]
         aObject = None
-        shortest_distance = (TILESIZE // 2) + 1
+        shortest_distance = (TILE_SIZE // 2) + 1
         center_x = (self.rect.left + self.rect.right) // 2
         center_y = (self.rect.top + self.rect.bottom) // 2
         for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
-            if isinstance(spr, Object):
+            if isinstance(spr, TestObject):
                 if self.facing == "up" or self.facing == "down":
                     object_center_x = (spr.rect.left + spr.rect.right) // 2
                     distance = abs(object_center_x - center_x)
@@ -58,11 +50,10 @@ class Player(Entity):
         # get pressed key.
         pressed = pygame.key.get_pressed()
 
-
-
         # movement
         self.vel.x = 0
         self.vel.y = 0
+        
         if pressed[pygame.K_UP]:
             self.facing = "up"
             self.vel.y = -self.speed
@@ -98,7 +89,7 @@ class Player(Entity):
         # object interaction
         if self.interaction_delay > 0:
             self.interaction_delay += 1
-        if self.interaction_delay >= FPS * INTERACTIONDELAY:
+        if self.interaction_delay >= FPS * INTERACTION_DELAY:
             self.interaction_delay = 0
 
         if pressed[pygame.K_z] and self.interaction_delay == 0:
@@ -120,12 +111,3 @@ class Player(Entity):
             self.rect.top = prevY
 
 
-class Wall(Entity):
-    def __init__(self, pos, *groups):
-        super().__init__(pygame.Color("#FF0000"), pos, *groups)
-
-
-class Object(Entity):
-    def __init__(self, name, color, pos, *groups):
-        super().__init__(color, pos, *groups)
-        self.name = name
