@@ -4,7 +4,7 @@ from pygame import *
 import sys
 import os
 sys.path.append(os.path.abspath('..'))
-from settings import *
+from game import *
 
 
 class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):

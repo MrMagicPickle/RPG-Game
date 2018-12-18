@@ -2,7 +2,7 @@ import pygame
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
-from settings import *
+from game import *
 
 
 class Entity(pygame.sprite.Sprite):

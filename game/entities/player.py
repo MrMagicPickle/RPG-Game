@@ -14,7 +14,7 @@ class Player(Entity):
         self.range = PLAYER_RANGE
         self.facing = "down"
         self.interaction_delay = 0
-
+        self.hasControl = True
 
     def hasCollided(self):
         # kind of hacky but it should work for now.
@@ -26,7 +26,7 @@ class Player(Entity):
         return False
 
 
-    def objectCollision(self):
+    def getCollidedEntity(self):
         entityGroup = self.groups()[0]
         aObject = None
         shortest_distance = (TILE_SIZE // 2) + 1
@@ -50,23 +50,41 @@ class Player(Entity):
         # get pressed key.
         pressed = pygame.key.get_pressed()
 
+
+        # object interaction
+        if self.interaction_delay > 0:
+            self.interaction_delay += 1
+        if self.interaction_delay >= FPS * INTERACTION_DELAY:
+            self.interaction_delay = 0
+        
+
         # movement
         self.vel.x = 0
         self.vel.y = 0
-        
-        if pressed[pygame.K_UP]:
-            self.facing = "up"
-            self.vel.y = -self.speed
-        if pressed[pygame.K_DOWN]:
-            self.facing = "down"
-            self.vel.y = self.speed
-        if pressed[pygame.K_LEFT]:
-            self.facing = "left"
-            self.vel.x = -self.speed
-        if pressed[pygame.K_RIGHT]:
-            self.facing = "right"
-            self.vel.x = self.speed
 
+        if self.hasControl:
+            if pressed[pygame.K_UP]:
+                self.facing = "up"
+                self.vel.y = -self.speed
+            if pressed[pygame.K_DOWN]:
+                self.facing = "down"
+                self.vel.y = self.speed
+            if pressed[pygame.K_LEFT]:
+                self.facing = "left"
+                self.vel.x = -self.speed
+            if pressed[pygame.K_RIGHT]:
+                self.facing = "right"
+                self.vel.x = self.speed
+            if pressed[pygame.K_z] and self.interaction_delay == 0:
+                #check whether the object is legit.
+                self.tryInteract()
+                
+        #exit interact button.
+        if pressed[pygame.K_x]:
+            self.hasControl = True
+            game.dialog.hide = True
+            game.dialog.hasControl = False
+            
         # store our current positions in case of collision.
         prevX = self.rect.left
         prevY = self.rect.top
@@ -86,28 +104,43 @@ class Player(Entity):
 
 
 
-        # object interaction
-        if self.interaction_delay > 0:
+    def tryInteract(self):
+        targetEntity = self.getInteractEntity()
+        
+        if targetEntity is not None:
+            #do something.
+            self.interact(targetEntity)
+
+    def getInteractEntity(self):
+        prevX = self.rect.left
+        prevY = self.rect.top
+        if self.facing == "up":
+            self.rect.top -= self.range
+        elif self.facing == "down":
+            self.rect.top += self.range
+        elif self.facing == "left":
+            self.rect.left -= self.range
+        elif self.facing == "right":
+            self.rect.left += self.range
+            
+        entity = self.getCollidedEntity()
+        
+        if entity is not None:
             self.interaction_delay += 1
-        if self.interaction_delay >= FPS * INTERACTION_DELAY:
-            self.interaction_delay = 0
+            
+        self.rect.left = prevX
+        self.rect.top = prevY
 
-        if pressed[pygame.K_z] and self.interaction_delay == 0:
-            prevX = self.rect.left
-            prevY = self.rect.top
-            if self.facing == "up":
-                self.rect.top -= self.range
-            elif self.facing == "down":
-                self.rect.top += self.range
-            elif self.facing == "left":
-                self.rect.left -= self.range
-            elif self.facing == "right":
-                self.rect.left += self.range
-            object = self.objectCollision()
-            if object is not None:
-                self.interaction_delay += 1
-                print("Interact", object.name)
-            self.rect.left = prevX
-            self.rect.top = prevY
+        return entity
 
+        
+        
 
+    def interact(self, target):
+        #freeze player control.
+        print("interacting with " + target.name)
+        if self.hasControl:
+            self.hasControl = False
+
+            game.dialog.hide = False
+            

@@ -1,5 +1,7 @@
 import pygame
 from pygame import *
+
+
 import sys
 import os
 sys.path.append(os.path.abspath('..'))
@@ -14,5 +16,5 @@ class Map:
             self.data.append(line.strip())
         file.close()
 
-        self.width = len(self.data[0]) * TILESIZE
-        self.height = len(self.data) * TILESIZE
+        self.width = len(self.data[0]) * TILE_SIZE
+        self.height = len(self.data) * TILE_SIZE

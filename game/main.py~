@@ -1,19 +1,27 @@
+import sys
 import pygame
 from pygame import *
 from settings import *
 
-from misc import *
+#-- Map.
+sys.path.append("maps")
+from mapClass import *
+
+
+#-- Camera.
+sys.path.append("camera")
+from scrollingCamera import *
 
 #-- Entities.
-import sys
 sys.path.append("entities")
 from player import *
 from wall import *
 from testObject import *
 
+
 def main():
     pygame.init()
-    screen = pygame.display.set_mode(SCREENSIZE.size)
+    screen = pygame.display.set_mode(SCREEN_SIZE.size)
     timer = pygame.time.Clock()
 
     level = Map("maps/empty.txt")
@@ -21,10 +29,10 @@ def main():
     levelWidth = level.width
     levelHeight = level.height
 
-    player = Player((TILESIZE, levelHeight - 2 * TILESIZE))
+    player = Player((TILE_SIZE, levelHeight - 2 * TILE_SIZE))
 
     print("LEVEL height: " + str(levelHeight))
-    print("Screen height: " + str(SCREENSIZE.height))
+    print("Screen height: " + str(SCREEN_SIZE.height))
     entities = CameraLayeredUpdates(player, pygame.Rect(0, 0, levelWidth, levelHeight))
 
     # wall sprite group.
@@ -44,8 +52,8 @@ def main():
                 # its in both walls sprite group and entities sprite group.
                 Wall((x, y), walls, entities)
 
-            x += TILESIZE
-        y += TILESIZE
+            x += TILE_SIZE
+        y += TILE_SIZE
         x = 0
     a = TestObject("a", pygame.Color("#0000FF"), (320, 320), interactables, entities)
     b = TestObject("b", pygame.Color("#00FFFF"), (352, 320), interactables, entities)
@@ -58,9 +66,14 @@ def main():
                 return
 
         entities.update()
-
+        game.dialog.update()
         screen.fill((0, 0, 0))
         entities.draw(screen)
+
+        if not game.dialog.hide:
+            game.dialog.hasControl = True
+            game.dialog.draw(screen)
+            
         pygame.display.update()
         timer.tick(60)
 

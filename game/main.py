@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame import *
-from settings import *
+from game import *
 
 #-- Map.
 sys.path.append("maps")
@@ -17,6 +17,7 @@ sys.path.append("entities")
 from player import *
 from wall import *
 from testObject import *
+
 
 def main():
     pygame.init()
@@ -65,9 +66,14 @@ def main():
                 return
 
         entities.update()
-
+        game.dialog.update()
         screen.fill((0, 0, 0))
         entities.draw(screen)
+
+        if not game.dialog.hide:
+            game.dialog.hasControl = True
+            game.dialog.draw(screen)
+            
         pygame.display.update()
         timer.tick(60)
 

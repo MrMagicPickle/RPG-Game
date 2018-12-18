@@ -1,5 +1,12 @@
 import pygame
 from pygame import *
+
+import sys
+import os
+sys.path.append(os.path.abspath('..'))
+from settings import *
+
+
 class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
     def __init__(self, target, worldSize):
         super().__init__()
@@ -21,15 +28,15 @@ class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
         if self.target:
             l, t, _, _ = self.target.rect
             
-            x = -l + SCREENSIZE.width/2
-            y = -t + SCREENSIZE.height/2
+            x = -l + SCREEN_SIZE.width/2
+            y = -t + SCREEN_SIZE.height/2
 
 
             #edge limits.
-            rightLimit = -(self.worldSize.width - SCREENSIZE.width)
+            rightLimit = -(self.worldSize.width - SCREEN_SIZE.width)
             leftLimit = 0
             topLimit = 0
-            bottomLimit = -(self.worldSize.height - SCREENSIZE.height)
+            bottomLimit = -(self.worldSize.height - SCREEN_SIZE.height)
 
             #prevent camera from crossing edges. 
             x = max(rightLimit, x)
@@ -45,5 +52,4 @@ class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
         spriteDict = self.spritedict
         for spr in self.sprites():
             rec = spriteDict[spr]
-            newRect = surface.blit(spr.image, spr.rect.move(self.cam)
-)
+            newRect = surface.blit(spr.image, spr.rect.move(self.cam))
