@@ -34,6 +34,26 @@ class Player(Entity):
         return False
 
 
+    def objectCollision(self):
+        entityGroup = self.groups()[0]
+        aObject = None
+        shortest_distance = (TILESIZE // 2) - 1
+        center_x = (self.rect.left + self.rect.right) // 2
+        center_y = (self.rect.top + self.rect.bottom) // 2
+        for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
+            if isinstance(spr, Object):
+                if self.facing == "up" or self.facing == "down":
+                    object_center_x = (spr.rect.left + spr.rect.right) // 2
+                    distance = abs(object_center_x - center_x)
+                elif self. facing == "left" or self.facing == "right":
+                    object_center_y = (spr.rect.top + spr.rect.bottom) // 2
+                    distance = abs(object_center_y - center_y)
+                if distance < shortest_distance:
+                    aObject = spr
+                    shortest_distance = distance
+        return aObject
+
+
     def update(self):
         # get pressed key.
         pressed = pygame.key.get_pressed()
@@ -84,8 +104,6 @@ class Player(Entity):
         if pressed[pygame.K_z] and self.interaction_delay == 0:
             prevX = self.rect.left
             prevY = self.rect.top
-            center_x = (self.rect.left + self.rect.right) // 2
-            center_y = (self.rect.top + self.rect.bottom) // 2
             if self.facing == "up":
                 self.rect.top -= self.range
             elif self.facing == "down":
@@ -94,9 +112,10 @@ class Player(Entity):
                 self.rect.left -= self.range
             elif self.facing == "right":
                 self.rect.left += self.range
-            if self.hasCollided():
+            object = self.objectCollision()
+            if object is not None:
                 self.interaction_delay += 1
-                print("Interact")
+                print("Interact", object.name)
             self.rect.left = prevX
             self.rect.top = prevY
 
