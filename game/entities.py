@@ -18,63 +18,95 @@ class Player(Entity):
         super().__init__(pygame.Color("#00FF00"), pos)
 
         self.vel = pygame.math.Vector2((0, 0))
-        self.speed = 8
+        self.speed = PLAYERSPEED
+        self.range = PLAYERRANGE
+        self.facing = "down"
+        self.interaction_delay = 0
 
-    def hasCollided(self):        
-        #kind of hacky but it should work for now.
+
+    def hasCollided(self):
+        # kind of hacky but it should work for now.
         entityGroup = self.groups()[0]
-        
         for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
             if not isinstance(spr, Player):
-                #collision happened.
+                # collision happened.
                 return True
         return False
-        
+
+
     def update(self):
-        #get pressed key.
+        # get pressed key.
         pressed = pygame.key.get_pressed()
- 
-        up = pressed[pygame.K_UP]
-        left = pressed[pygame.K_LEFT]
-        right = pressed[pygame.K_RIGHT]
-        down = pressed[pygame.K_DOWN]
 
 
-        if up:
+
+        # movement
+        self.vel.x = 0
+        self.vel.y = 0
+        if pressed[pygame.K_UP]:
+            self.facing = "up"
             self.vel.y = -self.speed
-        if down:
+        if pressed[pygame.K_DOWN]:
+            self.facing = "down"
             self.vel.y = self.speed
-        if left:
+        if pressed[pygame.K_LEFT]:
+            self.facing = "left"
             self.vel.x = -self.speed
-        if right:
+        if pressed[pygame.K_RIGHT]:
+            self.facing = "right"
             self.vel.x = self.speed
 
-        #if we're not moving...
-        if not (left or right):
-            self.vel.x = 0
-        if not (up or down):
-            self.vel.y = 0
-
-        #store our current positions in case of collision.
+        # store our current positions in case of collision.
         prevX = self.rect.left
         prevY = self.rect.top
 
-        #Update x position first.
+        # Update x position first.
         self.rect.left += self.vel.x
-        
-        #check for collisions.
+
+        # check for collisions.
         if self.hasCollided():
             self.rect.left = prevX
 
-        #Update y position.
+        # Update y position.
         self.rect.top += self.vel.y
 
         if self.hasCollided():
-            self.rect.top = prevY       
+            self.rect.top = prevY
+
+
+
+        # object interaction
+        if self.interaction_delay > 0:
+            self.interaction_delay += 1
+        if self.interaction_delay >= FPS * INTERACTIONDELAY:
+            self.interaction_delay = 0
+
+        if pressed[pygame.K_z] and self.interaction_delay == 0:
+            prevX = self.rect.left
+            prevY = self.rect.top
+            center_x = (self.rect.left + self.rect.right) // 2
+            center_y = (self.rect.top + self.rect.bottom) // 2
+            if self.facing == "up":
+                self.rect.top -= self.range
+            elif self.facing == "down":
+                self.rect.top += self.range
+            elif self.facing == "left":
+                self.rect.left -= self.range
+            elif self.facing == "right":
+                self.rect.left += self.range
+            if self.hasCollided():
+                self.interaction_delay += 1
+                print("Interact")
+            self.rect.left = prevX
+            self.rect.top = prevY
 
 
 class Wall(Entity):
     def __init__(self, pos, *groups):
-        super().__init__(pygame.Color("#FF0000"), pos, *groups)         
+        super().__init__(pygame.Color("#FF0000"), pos, *groups)
 
-    
+
+class Object(Entity):
+    def __init__(self, name, color, pos, *groups):
+        super().__init__(color, pos, *groups)
+        self.name = name

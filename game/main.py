@@ -26,6 +26,9 @@ def main():
     # path sprite group.
     paths = pygame.sprite.Group()
 
+    # interactable sprite group.
+    interactables = pygame.sprite.Group()
+
     # build level.
     x = y = 0
     for row in level.data:
@@ -37,6 +40,8 @@ def main():
             x += TILESIZE
         y += TILESIZE
         x = 0
+    a = Object("a", pygame.Color("#0000FF"), (320, 320), interactables, entities)
+    b = Object("b", pygame.Color("#00FFFF"), (352, 320), interactables, entities)
 
     while True:
         for e in pygame.event.get():
