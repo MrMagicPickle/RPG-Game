@@ -18,7 +18,8 @@ from pygame import *
 SCREEN_SIZE = pygame.Rect((0, 0, 800, 640))
 TILE_SIZE = 32 
         
-
+#Global Dialog ?
+bottomDialog = pygame.Rect(
 
     
     
@@ -120,18 +121,23 @@ class Player(Entity):
         down = pressed[pygame.K_DOWN]
         interact = pressed[pygame.K_z]
         exitInteract = pressed[pygame.K_x]
-    
-
-  
-        if up:
-            self.vel.y = -self.speed
-        if down:
-            self.vel.y = self.speed
-        if left:
-            self.vel.x = -self.speed
-        if right:
-            self.vel.x = self.speed
+        if self.hasControl:
+            if up:
+                self.vel.y = -self.speed
+            if down:
+                self.vel.y = self.speed
+            if left:
+                self.vel.x = -self.speed
+            if right:
+                self.vel.x = self.speed
             
+            if interact:
+                #check whether the object is legit - [spofli]
+                self.interact()
+
+        if exitInteract:
+            self.hasControl = True
+                
 
         #store our current positions in case of collision.
         prevX = self.rect.left
@@ -150,6 +156,12 @@ class Player(Entity):
         if self.hasCollided():
             self.rect.top = prevY
 
+    #can take more arguments ( probably the target to interact with )
+    def interact(self):
+        #freeze player control.
+        if self.hasControl:
+            self.hasControl = False
+        
         
         
         

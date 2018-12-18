@@ -1,13 +1,7 @@
 '''
-This is an extended version of cameraTest2.py file.
+This is an extension of collisionHandling.py file.
 
-It builds upon the previous by adding collision handling behaviour.
-'''
-
-'''
-This is an extension of the playerMovement.py file.
-
-We're gonna build on top of it - with scrolling camera.
+It handles what happens when user interacts with objects.
 '''
 
 import pygame
@@ -16,10 +10,35 @@ from pygame import *
 
 #GLOBALS
 SCREEN_SIZE = pygame.Rect((0, 0, 800, 640))
-TILE_SIZE = 32 
+TILE_SIZE = 32
+SHOW_DIALOG = False
         
+class Dialog():
+    def __init__(self, pos):
+        self.texts = []
+        self.image = Surface((SCREEN_SIZE.width, SCREEN_SIZE.height))
+        self.image.fill(Color("#800080"))
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hasControl = False
+        
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
 
+    def update(self):
+        pressed = pygame.key.get_pressed()
 
+        up = pressed[pygame.K_UP]
+        down = pressed[pygame.K_DOWN]
+        
+        if self.hasControl:
+            if up:
+                print("Up key pressed on dialog")
+            if down:
+                print("Down key pressed on dialog")
+            
+        #update texts in the dialog here i guess?
+        return
+        
     
     
 #Extend this class when creating new entities.
@@ -120,18 +139,25 @@ class Player(Entity):
         down = pressed[pygame.K_DOWN]
         interact = pressed[pygame.K_z]
         exitInteract = pressed[pygame.K_x]
-    
-
-  
-        if up:
-            self.vel.y = -self.speed
-        if down:
-            self.vel.y = self.speed
-        if left:
-            self.vel.x = -self.speed
-        if right:
-            self.vel.x = self.speed
+        if self.hasControl:
+            if up:
+                self.vel.y = -self.speed
+            if down:
+                self.vel.y = self.speed
+            if left:
+                self.vel.x = -self.speed
+            if right:
+                self.vel.x = self.speed
             
+            if interact:
+                #check whether the object is legit - [spofli]
+                self.interact()
+
+        if exitInteract:
+            self.hasControl = True
+            global SHOW_DIALOG
+            SHOW_DIALOG = False
+                
 
         #store our current positions in case of collision.
         prevX = self.rect.left
@@ -150,6 +176,15 @@ class Player(Entity):
         if self.hasCollided():
             self.rect.top = prevY
 
+    #can take more arguments ( probably the target to interact with )
+    def interact(self):
+        #freeze player control.
+        if self.hasControl:
+            self.hasControl = False
+            #set show dialog flag.
+            global SHOW_DIALOG
+            SHOW_DIALOG = True
+        
         
         
         
@@ -211,7 +246,8 @@ def main():
     levelWidth = len(level[0]) * TILE_SIZE
     levelHeight = len(level) * TILE_SIZE
 
-    player = Player((TILE_SIZE, levelHeight- 2*TILE_SIZE))    
+    player = Player((TILE_SIZE, levelHeight- 2*TILE_SIZE))
+    dialog = Dialog((0,442))
 
     print("LEVEL height: " + str(levelHeight))
     print("Screen height: " + str(SCREEN_SIZE.height))
@@ -245,9 +281,18 @@ def main():
                 return
 
         entities.update()
-        
+        dialog.update()
         screen.fill((0, 0, 0))
         entities.draw(screen)
+
+        if SHOW_DIALOG:
+            dialog.hasControl = True
+            dialog.draw(screen)
+            
+            
+        else:
+            dialog.hasControl = False
+            print("Dialog lost control")
         pygame.display.update()
         timer.tick(60)
     
