@@ -5,7 +5,7 @@ SCREEN_SIZE = pygame.Rect((0, 0, 800, 640))
 
 class Dialog():
     def __init__(self, pos):
-        self.texts = []
+        self.dialogues = dict()
         self.image = Surface((SCREEN_SIZE.width, SCREEN_SIZE.height))
         self.image.fill(Color("#800080"))
         self.rect = self.image.get_rect(topleft=pos)
@@ -30,14 +30,57 @@ class Dialog():
         #update texts in the dialog here i guess?
         return
 
+    def displayDialogue(self):
+        return None
+        
+        
+
+    def read(self, file):
+        #read file and store in self.texts
+        infile = open(file, 'r')
+        keys = []
+        texts = []
+        currText = ""
+        startStoring = False
+        for line in infile:
+            line = line.strip('\n')
+            line = line.split()
+            
+            if len(line) > 0:
+                if line[0] == "-":
+                    keys.append(line[1])
+                    startStoring = True
+                
+                elif line[0] == "*":
+                    texts.append(currText)
+                    currText = ""
+                    startStoring = False
+                else:
+                    if startStoring:
+                        for k in range (len(line)):
+                            currText += line[k]
+
+        for i in range (len(keys)):
+            self.dialogues[keys[i]] = texts[i]
+
+        
+                
+                
+
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((800, 640))
     timer = pygame.time.Clock()
     gameDialog = Dialog((0, 442))
-
+    gameDialog.read("dialogues.txt")
+    for key, val in gameDialog.dialogues.items():
+        print("----")
+        print("KEY: " + str(key))
+        print("Value: ")
+        print(val)
+        
     while True:
-
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 return
