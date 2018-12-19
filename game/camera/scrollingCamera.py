@@ -6,6 +6,9 @@ import os
 sys.path.append(os.path.abspath('..'))
 from game import *
 
+sys.path.append("entities")
+from player import *
+
 
 class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
     def __init__(self, target, worldSize):
@@ -52,4 +55,7 @@ class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
         spriteDict = self.spritedict #unused
         for spr in self.sprites():
             rec = spriteDict[spr] #unused
-            newRect = surface.blit(spr.image, spr.rect.move(self.cam))
+            if isinstance(spr, Player):
+                newRect = surface.blit(spr.image, spr.rect.move(self.cam.x, self.cam.y - 16))
+            else:
+                newRect = surface.blit(spr.image, spr.rect.move(self.cam))
