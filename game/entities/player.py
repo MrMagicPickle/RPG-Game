@@ -25,7 +25,7 @@ class Player(Entity):
 
     def loadFrame(self):
         # clear old surface
-        self.image = pygame.Surface((32, 48))
+        self.image = pygame.Surface((self.spriteWidth, self.spriteHeight))
         # load new frame into surface
         if self.facing == "down":
             self.image.blit(self.spriteSheet,
