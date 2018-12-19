@@ -42,7 +42,7 @@ class Dialog():
 
 class Game():
     def __init__(self):
-        self.dialog = Dialog((0,442))
+        self.dialog = Dialog((0, 442))
         
 
 game = Game()
