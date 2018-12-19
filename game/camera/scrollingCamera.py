@@ -49,7 +49,7 @@ class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
             self.cam.y = y
 
     def draw(self, surface):
-        spriteDict = self.spritedict
+        spriteDict = self.spritedict #unused
         for spr in self.sprites():
-            rec = spriteDict[spr]
+            rec = spriteDict[spr] #unused
             newRect = surface.blit(spr.image, spr.rect.move(self.cam))

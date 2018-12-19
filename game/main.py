@@ -55,8 +55,8 @@ def main():
             x += TILE_SIZE
         y += TILE_SIZE
         x = 0
-    a = TestObject("a", pygame.Color("#0000FF"), (320, 320), interactables, entities)
-    b = TestObject("b", pygame.Color("#00FFFF"), (352, 320), interactables, entities)
+    a = TestObject("a", pygame.Color("#0000FF"), (TILE_SIZE * 10, TILE_SIZE * 10), interactables, entities)
+    b = TestObject("b", pygame.Color("#00FFFF"), (TILE_SIZE * 11, TILE_SIZE * 10), interactables, entities)
 
     while True:
         for e in pygame.event.get():

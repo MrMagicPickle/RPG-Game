@@ -8,12 +8,11 @@ from testObject import *
 class Player(Entity):
     def __init__(self, pos, *groups):
         super().__init__(pygame.Color("#00FF00"), pos)
-
         self.vel = pygame.math.Vector2((0, 0))
         self.speed = PLAYER_SPEED
         self.range = PLAYER_RANGE
         self.facing = "down"
-        self.interaction_delay = 0
+        self.interactionDelay = 0
         self.hasControl = True
 
     def hasCollided(self):
@@ -29,20 +28,20 @@ class Player(Entity):
     def getCollidedEntity(self):
         entityGroup = self.groups()[0]
         aObject = None
-        shortest_distance = (TILE_SIZE // 2) + 1
-        center_x = (self.rect.left + self.rect.right) // 2
-        center_y = (self.rect.top + self.rect.bottom) // 2
+        shortestDistance = (TILE_SIZE // 2) + 1
+        centerX = (self.rect.left + self.rect.right) // 2
+        centerY = (self.rect.top + self.rect.bottom) // 2
         for spr in (pygame.sprite.spritecollide(self, entityGroup, False)):
             if isinstance(spr, TestObject):
                 if self.facing == "up" or self.facing == "down":
-                    object_center_x = (spr.rect.left + spr.rect.right) // 2
-                    distance = abs(object_center_x - center_x)
+                    objectCenterX = (spr.rect.left + spr.rect.right) // 2
+                    distance = abs(objectCenterX - centerX)
                 elif self. facing == "left" or self.facing == "right":
-                    object_center_y = (spr.rect.top + spr.rect.bottom) // 2
-                    distance = abs(object_center_y - center_y)
-                if distance < shortest_distance:
+                    objectCenterY = (spr.rect.top + spr.rect.bottom) // 2
+                    distance = abs(objectCenterY - centerY)
+                if distance < shortestDistance:
                     aObject = spr
-                    shortest_distance = distance
+                    shortestDistance = distance
         return aObject
 
 
@@ -52,10 +51,10 @@ class Player(Entity):
 
 
         # object interaction
-        if self.interaction_delay > 0:
-            self.interaction_delay += 1
-        if self.interaction_delay >= FPS * INTERACTION_DELAY:
-            self.interaction_delay = 0
+        if self.interactionDelay > 0:
+            self.interactionDelay += 1
+        if self.interactionDelay >= FPS * INTERACTION_DELAY:
+            self.interactionDelay = 0
         
 
         # movement
@@ -75,7 +74,7 @@ class Player(Entity):
             if pressed[pygame.K_RIGHT]:
                 self.facing = "right"
                 self.vel.x = self.speed
-            if pressed[pygame.K_z] and self.interaction_delay == 0:
+            if pressed[pygame.K_z] and self.interactionDelay == 0:
                 #check whether the object is legit.
                 self.tryInteract()
                 
@@ -126,7 +125,7 @@ class Player(Entity):
         entity = self.getCollidedEntity()
         
         if entity is not None:
-            self.interaction_delay += 1
+            self.interactionDelay += 1
             
         self.rect.left = prevX
         self.rect.top = prevY
