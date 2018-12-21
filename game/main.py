@@ -70,6 +70,10 @@ def main():
             if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
                 return
 
+        # sprites closer to bottom are drawn above sprites closer to top
+        for sprite in entities:
+            entities.change_layer(sprite, sprite.rect.bottom)
+
         entities.update()
         game.dialog.update()
         screen.fill((0, 0, 0))
