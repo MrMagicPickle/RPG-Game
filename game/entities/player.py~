@@ -8,12 +8,42 @@ from testObject import *
 class Player(Entity):
     def __init__(self, pos, *groups):
         super().__init__(pygame.Color("#00FF00"), pos)
+        self.spriteSheet = pygame.image.load("img/maincharacter.png")
+        self.spriteWidth = 32
+        self.spriteHeight = 48
+        self.walkingFrames = 4
+        self.currentFrame = 0
+        self.lastFrameUpdate = 0
         self.vel = pygame.math.Vector2((0, 0))
         self.speed = PLAYER_SPEED
         self.range = PLAYER_RANGE
         self.facing = "down"
         self.interactionDelay = 0
         self.hasControl = True
+        self.loadFrame()
+
+
+    def loadFrame(self):
+        # clear old surface
+        self.image = pygame.Surface((self.spriteWidth, self.spriteHeight))
+        # load new frame into surface
+        if self.facing == "down":
+            self.image.blit(self.spriteSheet,
+                            (-self.spriteWidth * self.currentFrame, -self.spriteHeight * 0, self.spriteWidth,
+                             self.spriteHeight))
+        if self.facing == "left":
+            self.image.blit(self.spriteSheet,
+                            (-self.spriteWidth * self.currentFrame, -self.spriteHeight * 1, self.spriteWidth,
+                             self.spriteHeight))
+        if self.facing == "right":
+            self.image.blit(self.spriteSheet,
+                            (-self.spriteWidth * self.currentFrame, -self.spriteHeight * 2, self.spriteWidth,
+                             self.spriteHeight))
+        if self.facing == "up":
+            self.image.blit(self.spriteSheet,
+                            (-self.spriteWidth * self.currentFrame, -self.spriteHeight * 3, self.spriteWidth,
+                             self.spriteHeight))
+
 
     def hasCollided(self):
         # kind of hacky but it should work for now.
@@ -45,19 +75,46 @@ class Player(Entity):
         return aObject
 
 
+    def movement(self):
+        if self.vel.x == 0 and self.vel.y == 0:
+            self.currentFrame = 0
+        else:
+            if self.lastFrameUpdate >= FPS // self.walkingFrames:
+                self.currentFrame += 1
+                self.lastFrameUpdate = 0
+            if self.currentFrame >= self.walkingFrames:
+                self.currentFrame = 0
+            self.lastFrameUpdate += 1
+
+            # store our current positions in case of collision.
+            prevX = self.rect.left
+            prevY = self.rect.top
+
+            # Update x position first.
+            self.rect.left += self.vel.x
+
+            # check for collisions.
+            if self.hasCollided():
+                self.rect.left = prevX
+
+            # Update y position.
+            self.rect.top += self.vel.y
+
+            if self.hasCollided():
+                self.rect.top = prevY
+
+
     def update(self):
         # get pressed key.
         pressed = pygame.key.get_pressed()
 
-
-        # object interaction
+        # object interaction variables
         if self.interactionDelay > 0:
             self.interactionDelay += 1
         if self.interactionDelay >= FPS * INTERACTION_DELAY:
             self.interactionDelay = 0
-        
 
-        # movement
+        # movement variables
         self.vel.x = 0
         self.vel.y = 0
 
@@ -81,26 +138,10 @@ class Player(Entity):
         #exit interact button.
         if pressed[pygame.K_x]:
             self.hasControl = True
-            game.dialog.hide = True
-            game.dialog.hasControl = False
-            
-        # store our current positions in case of collision.
-        prevX = self.rect.left
-        prevY = self.rect.top
+            game.dialog.hide()
 
-        # Update x position first.
-        self.rect.left += self.vel.x
-
-        # check for collisions.
-        if self.hasCollided():
-            self.rect.left = prevX
-
-        # Update y position.
-        self.rect.top += self.vel.y
-
-        if self.hasCollided():
-            self.rect.top = prevY
-
+        self.movement()
+        self.loadFrame()
 
 
     def tryInteract(self):
@@ -132,8 +173,8 @@ class Player(Entity):
 
         return entity
 
-        
-        
+
+
 
     def interact(self, target):
         #freeze player control.
@@ -141,5 +182,5 @@ class Player(Entity):
         if self.hasControl:
             self.hasControl = False
 
-            game.dialog.hide = False
+            game.dialog.show()
             

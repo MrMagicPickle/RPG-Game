@@ -1,9 +1,11 @@
 import pygame
 from pygame import *
-from entity import *
+from interactable import *
 
 
-class TestObject(Entity):
-    def __init__(self, name, color, pos, *groups):
-        super().__init__(color, pos, *groups)
+class TestObject(Interactable):
+    def __init__(self, name, color, pos, desc, *groups):
+        super().__init__(color, desc, pos, *groups)
         self.name = name
+        
+

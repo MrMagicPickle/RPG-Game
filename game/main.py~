@@ -70,8 +70,7 @@ def main():
         screen.fill((0, 0, 0))
         entities.draw(screen)
 
-        if not game.dialog.hide:
-            game.dialog.hasControl = True
+        if game.dialog.visible:
             game.dialog.draw(screen)
             
         pygame.display.update()

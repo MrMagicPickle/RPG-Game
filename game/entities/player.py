@@ -133,13 +133,13 @@ class Player(Entity):
                 self.vel.x = self.speed
             if pressed[pygame.K_z] and self.interactionDelay == 0:
                 #check whether the object is legit.
+                print("Player side interaction")
                 self.tryInteract()
                 
         #exit interact button.
         if pressed[pygame.K_x]:
             self.hasControl = True
-            game.dialog.hide = True
-            game.dialog.hasControl = False
+            game.dialog.hide()
 
         self.movement()
         self.loadFrame()
@@ -182,6 +182,5 @@ class Player(Entity):
         print("interacting with " + target.name)
         if self.hasControl:
             self.hasControl = False
-
-            game.dialog.hide = False
+            target.interact(self)
             

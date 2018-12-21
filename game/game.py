@@ -13,33 +13,61 @@ PLAYER_SPEED = 4
 PLAYER_RANGE = 8
 INTERACTION_DELAY = 0.5
 
-
+#init pygame font.
+pygame.font.init()
 class Dialog():
     def __init__(self, pos):
-        self.texts = []
+        self.dialogues = dict()
         self.image = Surface((SCREEN_SIZE.width, SCREEN_SIZE.height))
         self.image.fill(Color("#800080"))
         self.rect = self.image.get_rect(topleft=pos)
         self.hasControl = False
+        self.textFont = pygame.font.SysFont("Comic Sans", 35)
         self.visible = False
+        self.formattedTexts = None
+
+        self.rowCharLimit = 65
+        self.rowNum = 6
+        
+        self.interactionDelay = 1
         
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
+    #TODO: Handle the multi trigger of z button.
     def update(self):
+        # object interaction variables
+        if self.interactionDelay > 0:
+            self.interactionDelay += 1
+        if self.interactionDelay >= FPS * INTERACTION_DELAY:
+            self.interactionDelay = 0
+        
         pressed = pygame.key.get_pressed()
         up = pressed[pygame.K_UP]
         down = pressed[pygame.K_DOWN]
-        
+        z = pressed[pygame.K_z]
         if self.hasControl:
             if up:
                 print("Up key pressed on dialog")
             if down:
                 print("Down key pressed on dialog")
+            if z and self.interactionDelay == 0:
+                self.nextPage()         
             
+                
         #update texts in the dialog here i guess?
         return
 
+    def nextPage(self):
+        print("next onegaishimasu")
+        if self.formattedTexts:
+            #clear previous text.
+            self.image.fill(Color("#800080"))            
+            self.display()
+        else:
+            self.hide()
+        
+        
     def show(self):
         self.hasControl = True
         self.visible = True
@@ -47,7 +75,66 @@ class Dialog():
     def hide(self):
         self.hasControl = False
         self.visible = False
+        #clear any text on the image.
+        self.image.fill(Color("#800080"))
 
+        #give player control again.
+        game.player.hasControl = True
+
+    def display(self):        
+        rowHeight = 32
+        for i in range (min(self.rowNum, len(self.formattedTexts))):
+            currText = self.formattedTexts[i]
+            textSurface = self.textFont.render(currText, True, (255,255,255))
+            self.image.blit(textSurface, (0, i*rowHeight))
+
+
+        #cut out whatever was displayed.
+        if len(self.formattedTexts) > self.rowNum:
+            self.formattedTexts = self.formattedTexts[i:]
+        else:
+            #edge case.            
+            self.formattedTexts = None
+            
+
+    def formatText(self, text):
+        n = len(text)
+        start = 0
+        end = 0
+
+        formattedTexts = []
+        
+        while n > self.rowCharLimit:
+            #find the last word of the text
+            for k in range (self.rowCharLimit + start - 1, start, -1):
+                if text[k] == " ":
+                    end = k
+                    break
+
+            formattedTexts.append(text[start:end])
+
+            #remaining text length
+            truncatedTextLength = end - start + 1
+            n -= truncatedTextLength
+
+            #start pointer continues from cut off point.
+            start = end + 1
+
+        #add the remaining text.
+        formattedTexts.append(text[start:len(text)])
+        return formattedTexts
+                
+
+    def loadText(self, text):
+        self.formattedTexts = self.formatText(text)
+
+    def loadTextFromFile(self, key):
+        text = self.dialogues[key]
+        self.formattedTexts = self.formatText(text)
+        
+        
+        
+    '''
     def loadText(self, key):
         rowLength = 75
         text = self.dialogues[key]
@@ -78,12 +165,13 @@ class Dialog():
         self.image.blit(textSurface, (0, rowCounter))
             
         print(text)
-    
+    '''
     def read(self, dialogFile):
         #read file and store in self.texts
         infile = open(dialogFile, 'r')
         keys = []
         texts = []
+
         currText = ""
         startStoring = False
         for line in infile:
@@ -115,6 +203,7 @@ class Dialog():
 class Game():
     def __init__(self):
         self.dialog = Dialog((0, 442))
+        self.player = None
         
 
 game = Game()
