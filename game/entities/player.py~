@@ -25,7 +25,7 @@ class Player(Entity):
 
     def loadFrame(self):
         # clear old surface
-        self.image = pygame.Surface((self.spriteWidth, self.spriteHeight))
+        self.image = pygame.Surface((self.spriteWidth, self.spriteHeight), pygame.SRCALPHA, 32).convert_alpha()
         # load new frame into surface
         if self.facing == "down":
             self.image.blit(self.spriteSheet,
@@ -133,6 +133,7 @@ class Player(Entity):
                 self.vel.x = self.speed
             if pressed[pygame.K_z] and self.interactionDelay == 0:
                 #check whether the object is legit.
+                print("Player side interaction")
                 self.tryInteract()
                 
         #exit interact button.
@@ -181,6 +182,5 @@ class Player(Entity):
         print("interacting with " + target.name)
         if self.hasControl:
             self.hasControl = False
-
-            game.dialog.show()
+            target.interact(self)
             

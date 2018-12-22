@@ -39,7 +39,7 @@ class Dialog():
         # object interaction variables
         if self.interactionDelay > 0:
             self.interactionDelay += 1
-        if self.interactionDelay >= FPS * INTERACTION_DELAY:
+        if self.interactionDelay >= FPS * INTERACTION_DELAY*2:
             self.interactionDelay = 0
         
         pressed = pygame.key.get_pressed()
@@ -51,9 +51,9 @@ class Dialog():
                 print("Up key pressed on dialog")
             if down:
                 print("Down key pressed on dialog")
-            if z and self.interactionDelay == 0:
-                self.nextPage()         
-            
+            #if z and self.interactionDelay == 0:
+                #self.nextPage()
+
                 
         #update texts in the dialog here i guess?
         return
@@ -66,7 +66,8 @@ class Dialog():
             self.display()
         else:
             self.hide()
-        
+            print("closing dialog")
+        self.interactionDelay += 1
         
     def show(self):
         self.hasControl = True

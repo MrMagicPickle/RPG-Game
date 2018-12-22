@@ -67,8 +67,18 @@ def main():
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 return
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                return
+            if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_ESCAPE:                
+                    return
+
+                #Hmm... Sketchy code.
+                if e.key == pygame.K_z:
+                    if player.hasControl:
+                        player.tryInteract()
+                    elif game.dialog.hasControl:
+                        game.dialog.nextPage()
+                        
+
 
         # sprites closer to bottom are drawn above sprites closer to top
         for sprite in entities:
