@@ -144,7 +144,7 @@ class Player(Entity):
         self.movement()
         self.loadFrame()
 
-
+    ##NOTE: we can probably merge tryInteract and getInteractEntity?
     def tryInteract(self):
         targetEntity = self.getInteractEntity()
         

@@ -29,12 +29,12 @@ class Dialog():
         self.rowCharLimit = 65
         self.rowNum = 6
         
-        self.interactionDelay = 1
+        self.interactionDelay = 0
         
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-    #TODO: Handle the multi trigger of z button.
+    #TODO: Global interactionDelay maybe?
     def update(self):
         # object interaction variables
         if self.interactionDelay > 0:
@@ -52,7 +52,7 @@ class Dialog():
             if down:
                 print("Down key pressed on dialog")
             if z and self.interactionDelay == 0:
-                self.nextPage()         
+                self.nextPage()
             
                 
         #update texts in the dialog here i guess?
@@ -60,6 +60,7 @@ class Dialog():
 
     def nextPage(self):
         print("next onegaishimasu")
+        self.interactionDelay += 1
         if self.formattedTexts:
             #clear previous text.
             self.image.fill(Color("#800080"))            
@@ -69,6 +70,7 @@ class Dialog():
         
         
     def show(self):
+        self.interactionDelay += 1  # stop multi-press on dialogue start
         self.hasControl = True
         self.visible = True
 
@@ -77,9 +79,13 @@ class Dialog():
         self.visible = False
         #clear any text on the image.
         self.image.fill(Color("#800080"))
+        self.interactionDelay = 0  # reset when close dialogue
 
         #give player control again.
         game.player.hasControl = True
+        # feels abit hacky maybe we need a universal interaction delay for all non-movement key presses
+        # not sure but feels like there could be potential bugs too
+        game.player.interactionDelay += 1  # set player delay to cooldown
 
     def display(self):        
         rowHeight = 32
