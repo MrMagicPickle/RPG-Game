@@ -107,7 +107,6 @@ class Player(Entity):
     def update(self):
         # get pressed key.
         pressed = pygame.key.get_pressed()
-
         # object interaction variables
         if self.interactionDelay > 0:
             self.interactionDelay += 1

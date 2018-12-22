@@ -26,7 +26,7 @@ def main():
     screen = pygame.display.set_mode(SCREEN_SIZE.size)
     timer = pygame.time.Clock()
 
-    level = TiledMap("maps/testmap.tmx")
+    level = TiledMap("maps/tempmap")
     
     #for now..
     game.dialog.read("../sandbox/dialog/dialogues.txt")
@@ -49,19 +49,33 @@ def main():
     # interactable sprite group.
     interactables = pygame.sprite.Group()
 
+    objectList = ["a", "b", "c"]
+    objectDesc = [
+        "Page 1 dslfkjsdflk jslf jsadlf jasdklf jsdflk sadj flsadjf alsfdj salkjdf lkasjd flk kljhgjkdf gfjdk dfjkg"
+        " dhfgjk dfgkj dfs hfgdk hsdfgjkfdsh kgjfdshg kdfsjgh dskjfgh sdkfgjh kdjsfhg sdkjfgh fdksjhg kdsjfgh dskjfgh"
+        " kdsjhg kdfsjhg jkds hdskjg hdsgkjh dsfgkj dhsjk ghdsgk jfhds kjdfshg kdjsfgh dksfgh sdkjg Page 2 hsdfkgj"
+        " hdsjkfg hdfksjgh dfkjgh owrtw ktjnlwr tkjerwkly tnklyn ldgkhjf dlskgj ldsfgjrtgj eoirgj re gekrj tyerjk "
+        "htykerj hyrekwjyh ekwyh eoryhj eorwiy hweoirhyiweoyr hnejkwh ewjrkh ywoqietjrewio hios hfoh woithiore hio"
+        " heroigh erohi eroih eoihj eiorhjeroiytj oerij orei jewryh oiehrwy io",
+        "An untextured Box b", "Far Away Box"]
+    objectColors = ["#0000FF", "#FF00FF", "#00FFFF"]
+    objectCount = 0
     # build level.
-    tileID = level.data.get_tile_image_by_gid
-    background = pygame.Surface((level.width, level.height))
-    for layer in level.data.visible_layers:
-        if isinstance(layer, pytmx.TiledTileLayer):
-            for x, y, id, in layer:
-                tile = tileID(id)
-                if tile:
-                    background.blit(tile, (x * level.data.tilewidth, y * level.data.tileheight))
-
-    desc = "Page 1 dslfkjsdflk jslf jsadlf jasdklf jsdflk sadj flsadjf alsfdj salkjdf lkasjd flk kljhgjkdf gfjdk dfjkg dhfgjk dfgkj dfs hfgdk hsdfgjkfdsh kgjfdshg kdfsjgh dskjfgh sdkfgjh kdjsfhg sdkjfgh fdksjhg kdsjfgh dskjfgh kdsjhg kdfsjhg jkds hdskjg hdsgkjh dsfgkj dhsjk ghdsgk jfhds kjdfshg kdjsfgh dksfgh sdkjg Page 2 hsdfkgj hdsjkfg hdfksjgh dfkjgh owrtw ktjnlwr tkjerwkly tnklyn ldgkhjf dlskgj ldsfgjrtgj eoirgj re gekrj tyerjk htykerj hyrekwjyh ekwyh eoryhj eorwiy hweoirhyiweoyr hnejkwh ewjrkh ywoqietjrewio hios hfoh woithiore hio heroigh erohi eroih eoihj eiorhjeroiytj oerij orei jewryh oiehrwy io"
-    a = TestObject("a", pygame.Color("#0000FF"), (TILE_SIZE * 10, TILE_SIZE * 10),desc, interactables, entities)
-    b = TestObject("b", pygame.Color("#00FFFF"), (TILE_SIZE * 11, TILE_SIZE * 10), "An untextured Box b", interactables, entities)
+    background = level.bg
+    mapObjects = level.data.objects
+    # probably should make a class for building levels or some shit
+    for ob in mapObjects:
+        if ob.type == "Player":
+            player.rect.left = ob.x
+            player.rect.top = ob.y
+        if ob.type == "Wall":
+            Wall((ob.x, ob.y), ob.width, ob.height,  walls, entities)
+        if ob.type == "Object":
+            # maybe building objects can be split also idk
+            print(objectCount)
+            TestObject(objectList[objectCount], pygame.Color(objectColors[objectCount]), (ob.x, ob.y),
+                       objectDesc[objectCount], interactables, entities)
+            objectCount += 1
 
     while True:
         for e in pygame.event.get():
@@ -77,7 +91,7 @@ def main():
         entities.update()
         game.dialog.update()
         screen.fill((0, 0, 0))
-        screen.blit(background, (0,0))
+        screen.blit(background, background.get_rect().move(entities.cam))
         entities.draw(screen)
 
         if game.dialog.visible:
@@ -85,7 +99,6 @@ def main():
             
         pygame.display.update()
         timer.tick(60)
-
 
 if __name__ == "__main__":
     main()

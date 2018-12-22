@@ -85,7 +85,7 @@ class Dialog():
         game.player.hasControl = True
         # feels abit hacky maybe we need a universal interaction delay for all non-movement key presses
         # not sure but feels like there could be potential bugs too
-        game.player.interactionDelay += 1  # set player delay to cooldown
+        game.player.interactionDelay = 1  # set player delay to cooldown
 
     def display(self):        
         rowHeight = 32

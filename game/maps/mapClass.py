@@ -22,7 +22,10 @@ class Map:
 
 class TiledMap:
     def __init__(self, filename):
-        tmx = pytmx.load_pygame(filename, pixelalpha=True)
+        tmxFile = filename + ".tmx"
+        pngFile = filename + ".png"
+        self.bg = pygame.image.load(pngFile)
+        tmx = pytmx.load_pygame(tmxFile, pixelalpha=True)
         self.width = tmx.width * tmx.tilewidth
         self.height = tmx.height * tmx.tileheight
         self.data = tmx
