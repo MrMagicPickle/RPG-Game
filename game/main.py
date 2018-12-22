@@ -18,13 +18,15 @@ from player import *
 from wall import *
 from testObject import *
 
+import pytmx
+
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode(SCREEN_SIZE.size)
     timer = pygame.time.Clock()
 
-    level = Map("maps/empty.txt")
+    level = TiledMap("maps/testmap.tmx")
     
     #for now..
     game.dialog.read("../sandbox/dialog/dialogues.txt")
@@ -48,16 +50,14 @@ def main():
     interactables = pygame.sprite.Group()
 
     # build level.
-    x = y = 0
-    for row in level.data:
-        for col in row:
-            if col == "W":
-                # its in both walls sprite group and entities sprite group.
-                Wall((x, y), walls, entities)
-
-            x += TILE_SIZE
-        y += TILE_SIZE
-        x = 0
+    tileID = level.data.get_tile_image_by_gid
+    background = pygame.Surface((level.width, level.height))
+    for layer in level.data.visible_layers:
+        if isinstance(layer, pytmx.TiledTileLayer):
+            for x, y, id, in layer:
+                tile = tileID(id)
+                if tile:
+                    background.blit(tile, (x * level.data.tilewidth, y * level.data.tileheight))
 
     desc = "Page 1 dslfkjsdflk jslf jsadlf jasdklf jsdflk sadj flsadjf alsfdj salkjdf lkasjd flk kljhgjkdf gfjdk dfjkg dhfgjk dfgkj dfs hfgdk hsdfgjkfdsh kgjfdshg kdfsjgh dskjfgh sdkfgjh kdjsfhg sdkjfgh fdksjhg kdsjfgh dskjfgh kdsjhg kdfsjhg jkds hdskjg hdsgkjh dsfgkj dhsjk ghdsgk jfhds kjdfshg kdjsfgh dksfgh sdkjg Page 2 hsdfkgj hdsjkfg hdfksjgh dfkjgh owrtw ktjnlwr tkjerwkly tnklyn ldgkhjf dlskgj ldsfgjrtgj eoirgj re gekrj tyerjk htykerj hyrekwjyh ekwyh eoryhj eorwiy hweoirhyiweoyr hnejkwh ewjrkh ywoqietjrewio hios hfoh woithiore hio heroigh erohi eroih eoihj eiorhjeroiytj oerij orei jewryh oiehrwy io"
     a = TestObject("a", pygame.Color("#0000FF"), (TILE_SIZE * 10, TILE_SIZE * 10),desc, interactables, entities)
@@ -77,6 +77,7 @@ def main():
         entities.update()
         game.dialog.update()
         screen.fill((0, 0, 0))
+        screen.blit(background, (0,0))
         entities.draw(screen)
 
         if game.dialog.visible:
