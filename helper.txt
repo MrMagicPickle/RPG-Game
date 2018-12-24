@@ -19,3 +19,6 @@ https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-py
 
 youtube channel that explains some basic game dev - USEFUL:
 https://www.youtube.com/channel/UCy0eKoY5BVtcJHFQGKVe1yg
+
+Tiled
+https://www.mapeditor.org/
