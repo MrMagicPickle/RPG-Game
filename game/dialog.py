@@ -1,20 +1,9 @@
 import pygame
 from pygame import *
 
+from game import *
 
-WIDTH = 800
-HEIGHT = 640
-SCREEN_SIZE = pygame.Rect((0, 0, WIDTH, HEIGHT))
-FPS = 60
-TITLE = "HORROR_RPG"
-TILE_SIZE = 32
 
-PLAYER_SPEED = 4
-PLAYER_RANGE = 8
-INTERACTION_DELAY = 0.5
-
-#init pygame font.
-pygame.font.init()
 class Dialog():
     def __init__(self, pos):
         self.dialogues = dict()
@@ -29,19 +18,12 @@ class Dialog():
         self.rowCharLimit = 65
         self.rowNum = 6
         
-        self.interactionDelay = 1
         
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
     #TODO: Handle the multi trigger of z button.
     def update(self):
-        # object interaction variables
-        if self.interactionDelay > 0:
-            self.interactionDelay += 1
-        if self.interactionDelay >= FPS * INTERACTION_DELAY*2:
-            self.interactionDelay = 0
-        
         pressed = pygame.key.get_pressed()
         up = pressed[pygame.K_UP]
         down = pressed[pygame.K_DOWN]
@@ -51,9 +33,6 @@ class Dialog():
                 print("Up key pressed on dialog")
             if down:
                 print("Down key pressed on dialog")
-            #if z and self.interactionDelay == 0:
-                #self.nextPage()
-
                 
         #update texts in the dialog here i guess?
         return
@@ -67,7 +46,6 @@ class Dialog():
         else:
             self.hide()
             print("closing dialog")
-        self.interactionDelay += 1
         
     def show(self):
         self.hasControl = True
@@ -199,13 +177,5 @@ class Dialog():
         for i in range (len(keys)):
             self.dialogues[keys[i]] = texts[i]
 
-        
-
-class Game():
-    def __init__(self):
-        self.dialog = Dialog((0, 442))
-        self.player = None
-        
-
-game = Game()
+pygame.font.init()
 

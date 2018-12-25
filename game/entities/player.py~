@@ -131,10 +131,9 @@ class Player(Entity):
             if pressed[pygame.K_RIGHT]:
                 self.facing = "right"
                 self.vel.x = self.speed
-            if pressed[pygame.K_z] and self.interactionDelay == 0:
+            #if pressed[pygame.K_z] and self.interactionDelay == 0:
                 #check whether the object is legit.
-                print("Player side interaction")
-                self.tryInteract()
+                #self.tryInteract()
                 
         #exit interact button.
         if pressed[pygame.K_x]:

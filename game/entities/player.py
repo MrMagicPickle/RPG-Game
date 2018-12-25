@@ -107,13 +107,7 @@ class Player(Entity):
     def update(self):
         # get pressed key.
         pressed = pygame.key.get_pressed()
-
-        # object interaction variables
-        if self.interactionDelay > 0:
-            self.interactionDelay += 1
-        if self.interactionDelay >= FPS * INTERACTION_DELAY:
-            self.interactionDelay = 0
-
+        
         # movement variables
         self.vel.x = 0
         self.vel.y = 0
@@ -131,9 +125,7 @@ class Player(Entity):
             if pressed[pygame.K_RIGHT]:
                 self.facing = "right"
                 self.vel.x = self.speed
-            #if pressed[pygame.K_z] and self.interactionDelay == 0:
-                #check whether the object is legit.
-                #self.tryInteract()
+
                 
         #exit interact button.
         if pressed[pygame.K_x]:
@@ -164,10 +156,7 @@ class Player(Entity):
             self.rect.left += self.range
             
         entity = self.getCollidedEntity()
-        
-        if entity is not None:
-            self.interactionDelay += 1
-            
+                    
         self.rect.left = prevX
         self.rect.top = prevY
 

@@ -1,20 +1,3 @@
-import pygame
-from pygame import *
-
-
-WIDTH = 800
-HEIGHT = 640
-SCREEN_SIZE = pygame.Rect((0, 0, WIDTH, HEIGHT))
-FPS = 60
-TITLE = "HORROR_RPG"
-TILE_SIZE = 32
-
-PLAYER_SPEED = 4
-PLAYER_RANGE = 8
-INTERACTION_DELAY = 0.5
-
-#init pygame font.
-pygame.font.init()
 class Dialog():
     def __init__(self, pos):
         self.dialogues = dict()
@@ -198,14 +181,3 @@ class Dialog():
 
         for i in range (len(keys)):
             self.dialogues[keys[i]] = texts[i]
-
-        
-
-class Game():
-    def __init__(self):
-        self.dialog = Dialog((0, 442))
-        self.player = None
-        
-
-game = Game()
-

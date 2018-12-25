@@ -18,6 +18,8 @@ from player import *
 from wall import *
 from testObject import *
 
+#-- Dialog.
+from dialog import *
 
 def main():
     pygame.init()
@@ -25,6 +27,10 @@ def main():
     timer = pygame.time.Clock()
 
     level = Map("maps/empty.txt")
+
+    #init our dialog.
+    dialog = Dialog((0, 442))
+    game.dialog = dialog
     
     #for now..
     game.dialog.read("../sandbox/dialog/dialogues.txt")
