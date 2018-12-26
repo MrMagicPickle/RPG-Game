@@ -6,8 +6,7 @@ from game import *
 #-- Map.
 sys.path.append("maps")
 from mapClass import *
-
-
+from level import *
 #-- Camera.
 sys.path.append("camera")
 from scrollingCamera import *
@@ -26,48 +25,25 @@ def main():
     screen = pygame.display.set_mode(SCREEN_SIZE.size)
     timer = pygame.time.Clock()
 
-    level = Map("maps/empty.txt")
-
     #init our dialog.
     dialog = Dialog((0, 442))
     game.dialog = dialog
     
     #for now..
     game.dialog.read("../sandbox/dialog/dialogues.txt")
-    
-    levelWidth = level.width
-    levelHeight = level.height
 
-    player = Player((TILE_SIZE, levelHeight - 2 * TILE_SIZE))
+    player = Player((0, 0))
     game.player = player
-    print("LEVEL height: " + str(levelHeight))
+
+    # make level
+    level = Level("maps/tempmap")
+    level.buildLevel()
+    level.playerStartPoint(player)
+    level.entities.getTarget(player)
+
+
+    print("LEVEL height: " + str(level.height))
     print("Screen height: " + str(SCREEN_SIZE.height))
-    entities = CameraLayeredUpdates(player, pygame.Rect(0, 0, levelWidth, levelHeight))
-
-    # wall sprite group.
-    walls = pygame.sprite.Group()
-
-    # path sprite group.
-    paths = pygame.sprite.Group()
-
-    # interactable sprite group.
-    interactables = pygame.sprite.Group()
-
-    # build level.
-    x = y = 0
-    for row in level.data:
-        for col in row:
-            if col == "W":
-                # its in both walls sprite group and entities sprite group.
-                Wall((x, y), walls, entities)
-
-            x += TILE_SIZE
-        y += TILE_SIZE
-        x = 0
-
-    desc = "dslfkjsdflk jslf jsadlf jasdklf jsdflk sadj flsadjf alsfdj salkjdf lkasjd flk kljhgjkdf gfjdk dfjkg dhfgjk dfgkj dfs hfgdk hsdfgjkfdsh kgjfdshg kdfsjgh dskjfgh sdkfgjh kdjsfhg sdkjfgh fdksjhg kdsjfgh dskjfgh kdsjhg kdfsjhg jkds hdskjg hdsgkjh dsfgkj dhsjk ghdsgk jfhds kjdfshg kdjsfgh dksfgh sdkjg hsdfkgj hdsjkfg hdfksjgh dfkjgh owrtw ktjnlwr tkjerwkly tnklyn ldgkhjf dlskgj ldsfgjrtgj eoirgj re gekrj tyerjk htykerj hyrekwjyh ekwyh eoryhj eorwiy hweoirhyiweoyr hnejkwh ewjrkh ywoqietjrewio hios hfoh woithiore hio heroigh erohi eroih eoihj eiorhjeroiytj oerij orei jewryh oiehrwy io"
-    a = TestObject("a", pygame.Color("#0000FF"), (TILE_SIZE * 10, TILE_SIZE * 10),desc, interactables, entities)
-    b = TestObject("b", pygame.Color("#00FFFF"), (TILE_SIZE * 11, TILE_SIZE * 10), "An untextured Box b", interactables, entities)
 
     while True:
         for e in pygame.event.get():
@@ -87,13 +63,14 @@ def main():
 
 
         # sprites closer to bottom are drawn above sprites closer to top
-        for sprite in entities:
-            entities.change_layer(sprite, sprite.rect.bottom)
+        for sprite in level.entities:
+            level.entities.change_layer(sprite, sprite.rect.bottom)
 
-        entities.update()
+        level.entities.update()
         game.dialog.update()
         screen.fill((0, 0, 0))
-        entities.draw(screen)
+        screen.blit(level.background, level.background.get_rect().move(level.entities.cam))
+        level.entities.draw(screen)
 
         if game.dialog.visible:
             game.dialog.draw(screen)

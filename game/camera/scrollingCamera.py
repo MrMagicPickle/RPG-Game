@@ -11,19 +11,21 @@ from player import *
 
 
 class CameraLayeredUpdates(pygame.sprite.LayeredUpdates):
-    def __init__(self, target, worldSize):
+    def __init__(self, worldSize):
         super().__init__()
-        self.target = target
+        #self.target = target
         self.worldSize = worldSize
 
         #coordinates of our camera.
         self.cam = pygame.math.Vector2(0, 0)
 
         #add the target to our group.
-        if self.target:
-            self.add(target)
+        #if self.target:
+        #    self.add(target)
 
-
+    def getTarget(self, target):
+        self.target = target
+        self.add(target)
 
     def update(self, *args):
 
